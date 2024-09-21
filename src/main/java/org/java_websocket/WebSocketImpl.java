@@ -86,11 +86,6 @@ public class WebSocketImpl implements WebSocket {
   public static final int DEFAULT_WSS_PORT = 443;
 
   /**
-   * Initial buffer size
-   */
-  public static final int RCVBUF = 16384;
-
-  /**
    * Logger instance
    *
    * @since 1.4.0
@@ -224,10 +219,11 @@ public class WebSocketImpl implements WebSocket {
    */
   public void decode(ByteBuffer socketBuffer) {
     assert (socketBuffer.hasRemaining());
-    log.trace("process({}): ({})", socketBuffer.remaining(),
-        (socketBuffer.remaining() > 1000 ? "too big to display"
-            : new String(socketBuffer.array(), socketBuffer.position(), socketBuffer.remaining())));
-
+    if (log.isTraceEnabled()) {
+      log.trace("process({}): ({})", socketBuffer.remaining(),
+              (socketBuffer.remaining() > 1000 ? "too big to display"
+                      : new String(socketBuffer.array(), socketBuffer.position(), socketBuffer.remaining())));
+    }
     if (readyState != ReadyState.NOT_YET_CONNECTED) {
       if (readyState == ReadyState.OPEN) {
         decodeFrames(socketBuffer);
